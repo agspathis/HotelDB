@@ -17,13 +17,13 @@ public class DatabaseSelect extends Database{
 	
 	
 	public DatabaseSelect(JTextArea textArea, String command){
-		super();
+		super(command);
 		this.textArea = textArea;
-		execute(command);
+		//execute(command);
 	}
 
 	@Override
-	public void execute(String command) {
+	public boolean execute() {
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -32,18 +32,19 @@ public class DatabaseSelect extends Database{
 			ps = (PreparedStatement) connection.prepareStatement(command);
 			rs = ps.executeQuery();
 			
-			textArea.append("Query executed\nSize: "+rs.getFetchSize()+"\n");
+			textArea.append("Query executed\n");
 			
 			// it creates and displays the table
 		    JTable table = new JTable(buildTableModel(rs));
 		    JOptionPane.showMessageDialog(null, new JScrollPane(table), "View", 
 		    		JOptionPane.DEFAULT_OPTION);
+		    return true;
 		    
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode()+"\n"+e.getMessage()+
 							"\n"+e.getSQLState()+"\n");
-						
+			return false;
 		}finally {
 
 			try {

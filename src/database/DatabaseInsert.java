@@ -9,24 +9,25 @@ import com.mysql.jdbc.PreparedStatement;
 public class DatabaseInsert extends Database{
 	
 	public DatabaseInsert(JTextArea textArea, String command){
-		super();
+		super(command);
 		this.textArea = textArea;
-		execute(command);
+		//execute(command);
 	}
 
 	@Override
-	public void execute(String command) {
+	public boolean execute() {
 		PreparedStatement ps = null;
 		
 		try {
 			ps = (PreparedStatement) connection.prepareStatement(command);
 			ps.executeUpdate();
 			textArea.append("Record inserted\n");
+			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode()+"\n"+e.getMessage()+
 					"\n"+e.getSQLState()+"\n");
-			
+			return false;
 		}finally {
 
             try {

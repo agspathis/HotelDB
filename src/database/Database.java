@@ -21,10 +21,12 @@ public abstract class Database{
     
     protected JTextArea textArea;
     protected Connection connection;
-    private boolean connectionState = false;
+    protected boolean connectionState = false;
+    protected String command;
     
-    public Database(){
+    public Database(String command){
         connectionState = this.makeConnection();
+        this.command = command;
     }
     
     /**
@@ -82,6 +84,6 @@ public abstract class Database{
      * 
      * @param command query to execute
      */
-    abstract public void execute(String command);
+    abstract public boolean execute();
 
 }

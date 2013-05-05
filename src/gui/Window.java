@@ -46,15 +46,45 @@ public class Window extends JFrame{
 		JToolBar toolBar = new JToolBar();
 		
 		bookButton = new JButton("Book");
+		bookButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ReservationWindow reservationWindow = new ReservationWindow(textArea);
+				reservationWindow.setVisible(true);
+				
+			}
+		});
 		toolBar.add(bookButton);
 		
 		freeRoomButton = new JButton("Free Rooms");
+		freeRoomButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				FreeRoomsWindow freeRommsWindow = new FreeRoomsWindow(textArea);
+				freeRommsWindow.setVisible(true);
+			}
+		});
 		toolBar.add(freeRoomButton);
 		
 		checkIn = new JButton("Check In");
+		checkIn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				CheckInWindow checkInWindow = new CheckInWindow(textArea);
+				checkInWindow.setVisible(true);
+			}
+		});
 		toolBar.add(checkIn);
 		
 		checkOut = new JButton("Check Out");
+		checkOut.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				CheckOutWindow checkOutWindow = new CheckOutWindow(textArea);
+				checkOutWindow.setVisible(true);
+			}
+		});
 		toolBar.add(checkOut);
 		
 		paymentButton = new JButton("Payment");
@@ -97,27 +127,35 @@ public class Window extends JFrame{
 	}
 	
 	private void insertQuery(){
-		@SuppressWarnings("unused")
 		DatabaseInsert query = new DatabaseInsert(textArea, 
 				commandTextField.getText());
+		if(query.getConnectionState()){
+			query.execute();
+		}
 	}
 	
 	private void selectQuery(){
-		@SuppressWarnings("unused")
 		DatabaseSelect query = new DatabaseSelect(textArea, 
 				commandTextField.getText());
+		if(query.getConnectionState()){
+			query.execute();
+		}
 	}
 	
 	private void updateQuery(){
-		@SuppressWarnings("unused")
 		DatabaseUpdate query = new DatabaseUpdate(textArea, 
 				commandTextField.getText());
+		if(query.getConnectionState()){
+			query.execute();
+		}
 	}
 	
 	private void deleteQuery(){
-		@SuppressWarnings("unused")
 		DatabaseDelete query = new DatabaseDelete(textArea, 
 				commandTextField.getText());
+		if(query.getConnectionState()){
+			query.execute();
+		}
 	}
 	
 	private class ActionHandler implements ActionListener{

@@ -9,25 +9,30 @@ import com.mysql.jdbc.PreparedStatement;
 public class DatabaseUpdate extends Database{
 
 	public DatabaseUpdate(JTextArea textArea, String command){
-		super();
+		super(command);
 		this.textArea = textArea;
-		execute(command);
+		//execute(command);
 	}
 	
 	@Override
-	public void execute(String command) {
+	public boolean execute() {
 		PreparedStatement ps = null;
 		
 		try {
 			ps = (PreparedStatement) connection.prepareStatement(command);
 			ps.executeUpdate();
 			
+			if(ps.getUpdateCount()==0){
+				textArea.append("Empty set updated\n");
+				return false;
+			}
 			textArea.append("Record updated\n");
+			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode()+"\n"+e.getMessage()+
 					"\n"+e.getSQLState()+"\n");
-			
+			return false;
 		}finally {
 
             try {
