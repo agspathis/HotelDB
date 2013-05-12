@@ -1,0 +1,3 @@
+db.url=jdbc:mysql://localhost:3306/hotelDB
+db.user=admin
+db.passwd=admin

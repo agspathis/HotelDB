@@ -2,6 +2,7 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
+DROP SCHEMA IF EXISTS `hotelDB` ;
 CREATE SCHEMA IF NOT EXISTS `hotelDB` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
 SHOW WARNINGS;
 USE `hotelDB` ;
@@ -9,13 +10,16 @@ USE `hotelDB` ;
 -- -----------------------------------------------------
 -- Table `hotelDB`.`Room`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Room` ;
+
+SHOW WARNINGS;
 CREATE  TABLE IF NOT EXISTS `hotelDB`.`Room` (
   `idRoom` VARCHAR(10) NOT NULL ,
   `floor` INT NOT NULL ,
   `number` INT NOT NULL ,
   `capacity` INT NOT NULL ,
   `discription` TEXT NULL ,
-  `basePrice` FLOAT NOT NULL DEFAULT 0.0 ,
+  `basePrice` FLOAT NULL DEFAULT 0.0 ,
   PRIMARY KEY (`idRoom`) )
 ENGINE = InnoDB
 COMMENT = 'Representation of room entity.';
@@ -25,6 +29,9 @@ SHOW WARNINGS;
 -- -----------------------------------------------------
 -- Table `hotelDB`.`Customer`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Customer` ;
+
+SHOW WARNINGS;
 CREATE  TABLE IF NOT EXISTS `hotelDB`.`Customer` (
   `idCustomer` VARCHAR(20) NOT NULL ,
   `lastName` VARCHAR(45) NOT NULL ,
@@ -41,25 +48,29 @@ SHOW WARNINGS;
 -- -----------------------------------------------------
 -- Table `hotelDB`.`Rental`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Rental` ;
+
+SHOW WARNINGS;
 CREATE  TABLE IF NOT EXISTS `hotelDB`.`Rental` (
-  `Room_idRoom` VARCHAR(10) NOT NULL ,
-  `Customer_idCustomer` VARCHAR(20) NOT NULL ,
+  `idRental` INT(11) NOT NULL AUTO_INCREMENT ,
+  `idRoom` VARCHAR(10) NOT NULL ,
+  `idCustomer` VARCHAR(20) NOT NULL ,
   `arrivalDate` DATETIME NOT NULL ,
   `departureDate` DATETIME NOT NULL ,
   `dayPrice` FLOAT NOT NULL ,
   `checkIn` TINYINT(1) NOT NULL DEFAULT false ,
   `checkOut` TINYINT(1) NOT NULL DEFAULT false ,
-  `payed` TINYINT(1) NOT NULL ,
-  PRIMARY KEY (`Room_idRoom`, `Customer_idCustomer`) ,
-  INDEX `fk_Room_has_Customer_Customer1_idx` (`Customer_idCustomer` ASC) ,
-  INDEX `fk_Room_has_Customer_Room_idx` (`Room_idRoom` ASC) ,
+  `payed` TINYINT(1) NOT NULL DEFAULT false ,
+  PRIMARY KEY (`idRental`) ,
+  INDEX `fk_Room_has_Customer_Customer1_idx` (`idCustomer` ASC) ,
+  INDEX `fk_Room_has_Customer_Room_idx` (`idRoom` ASC) ,
   CONSTRAINT `fk_Room_has_Customer_Room`
-    FOREIGN KEY (`Room_idRoom` )
+    FOREIGN KEY (`idRoom` )
     REFERENCES `hotelDB`.`Room` (`idRoom` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Room_has_Customer_Customer1`
-    FOREIGN KEY (`Customer_idCustomer` )
+    FOREIGN KEY (`idCustomer` )
     REFERENCES `hotelDB`.`Customer` (`idCustomer` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -69,21 +80,16 @@ COMMENT = 'Entity for reservation and current state of availeability.';
 SHOW WARNINGS;
 
 -- -----------------------------------------------------
--- Table `hotelDB`.`Offer`
+-- Table `hotelDB`.`Discount`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `hotelDB`.`Offer` (
-  `idOffer` INT NOT NULL ,
+DROP TABLE IF EXISTS `hotelDB`.`Discount` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `hotelDB`.`Discount` (
+  `idDiscount` INT(11) NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   `discount` FLOAT NOT NULL DEFAULT 0 ,
-  `Rental_Room_idRoom` VARCHAR(10) NOT NULL ,
-  `Rental_Customer_idCustomer` VARCHAR(20) NOT NULL ,
-  PRIMARY KEY (`idOffer`, `Rental_Customer_idCustomer`) ,
-  INDEX `fk_Offer_Rental1_idx` (`Rental_Room_idRoom` ASC, `Rental_Customer_idCustomer` ASC) ,
-  CONSTRAINT `fk_Offer_Rental1`
-    FOREIGN KEY (`Rental_Room_idRoom` , `Rental_Customer_idCustomer` )
-    REFERENCES `hotelDB`.`Rental` (`Room_idRoom` , `Customer_idCustomer` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`idDiscount`) )
 ENGINE = InnoDB
 COMMENT = 'Entity witch contains all offers (turist agents, discounts a' /* comment truncated */;
 
@@ -92,22 +98,71 @@ SHOW WARNINGS;
 -- -----------------------------------------------------
 -- Table `hotelDB`.`Service`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Service` ;
+
+SHOW WARNINGS;
 CREATE  TABLE IF NOT EXISTS `hotelDB`.`Service` (
-  `idService` INT NOT NULL ,
+  `idService` INT(11) NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   `price` FLOAT NOT NULL ,
-  `Rental_Room_idRoom` VARCHAR(10) NOT NULL ,
-  `Rental_Customer_idCustomer` VARCHAR(20) NOT NULL ,
-  `payed` TINYINT(1) NOT NULL ,
-  PRIMARY KEY (`idService`) ,
-  INDEX `fk_Service_Rental1_idx` (`Rental_Room_idRoom` ASC, `Rental_Customer_idCustomer` ASC) ,
-  CONSTRAINT `fk_Service_Rental1`
-    FOREIGN KEY (`Rental_Room_idRoom` , `Rental_Customer_idCustomer` )
-    REFERENCES `hotelDB`.`Rental` (`Room_idRoom` , `Customer_idCustomer` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`idService`) )
 ENGINE = InnoDB
 COMMENT = 'This entity connects the reservation with some extra service' /* comment truncated */;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `hotelDB`.`Order`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Order` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `hotelDB`.`Order` (
+  `idOrder` INT(11) NOT NULL AUTO_INCREMENT ,
+  `idService` INT(11) NOT NULL ,
+  `idRental` INT(11) NOT NULL ,
+  `payed` TINYINT(1) NOT NULL DEFAULT false ,
+  INDEX `fk_Service_has_Rental_Rental1` (`idRental` ASC) ,
+  INDEX `fk_Service_has_Rental_Service1` (`idService` ASC) ,
+  PRIMARY KEY (`idOrder`) ,
+  CONSTRAINT `fk_Service_has_Rental_Service1`
+    FOREIGN KEY (`idService` )
+    REFERENCES `hotelDB`.`Service` (`idService` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Service_has_Rental_Rental1`
+    FOREIGN KEY (`idRental` )
+    REFERENCES `hotelDB`.`Rental` (`idRental` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `hotelDB`.`Offer`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Offer` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `hotelDB`.`Offer` (
+  `idOffer` INT(11) NOT NULL AUTO_INCREMENT ,
+  `idRental` INT(11) NOT NULL ,
+  `idDiscount` INT(11) NOT NULL ,
+  INDEX `fk_Rental_has_Offer_Offer1` (`idDiscount` ASC) ,
+  INDEX `fk_Rental_has_Offer_Rental1` (`idRental` ASC) ,
+  PRIMARY KEY (`idOffer`) ,
+  CONSTRAINT `fk_Rental_has_Offer_Rental1`
+    FOREIGN KEY (`idRental` )
+    REFERENCES `hotelDB`.`Rental` (`idRental` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Rental_has_Offer_Offer1`
+    FOREIGN KEY (`idDiscount` )
+    REFERENCES `hotelDB`.`Discount` (`idDiscount` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 SHOW WARNINGS;
 
@@ -121,8 +176,9 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('1', 1, 1, 1, 'seeview', 40.0);
-INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('2', 3, 10, 2, 'seeview', 50.0);
+INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('101', 1, 1, 2, 'seeview', 50);
+INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('201', 2, 1, 1, 'seeview', 40);
+INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('301', 3, 1, 3, 'seeview', 60);
 
 COMMIT;
 
@@ -131,8 +187,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Customer` (`idCustomer`, `lastName`, `firstName`, `city`, `country`, `email`) VALUES ('1', 'stanev', 'jim', 'patras', 'greece', 'ece7436');
-INSERT INTO `hotelDB`.`Customer` (`idCustomer`, `lastName`, `firstName`, `city`, `country`, `email`) VALUES ('2', 'leshtova', 'daniela', 'thasos', 'greece', 'dan');
+INSERT INTO `hotelDB`.`Customer` (`idCustomer`, `lastName`, `firstName`, `city`, `country`, `email`) VALUES ('7436', 'Stanev', 'Dimitar', 'Patra', 'Greece', 'jimstanev@gmail.com');
+INSERT INTO `hotelDB`.`Customer` (`idCustomer`, `lastName`, `firstName`, `city`, `country`, `email`) VALUES ('7729', 'ΣΠΑΘΗΣ', 'ΑΡΙΣΤΟΤΕΛΗΣ', 'Kefalonia', 'Greece', 'ece7729@upnet.gr');
 
 COMMIT;
 
@@ -141,18 +197,18 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Rental` (`Room_idRoom`, `Customer_idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES ('1', '1', '2000-02-01 00:00:00', '2000-02-15 00:00:00', 40, 0, 0, 0);
-INSERT INTO `hotelDB`.`Rental` (`Room_idRoom`, `Customer_idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES ('2', '2', '2013-05-03 00:00:00', '2013-05-04 00:00:00', 50, 1, 0, 0);
+INSERT INTO `hotelDB`.`Rental` (`idRental`, `idRoom`, `idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES (1, '101', '7436', '2012-07-07 12:00:00', '2012-07-10', 55, 1, 1, 1);
+INSERT INTO `hotelDB`.`Rental` (`idRental`, `idRoom`, `idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES (2, '301', '7729', '2013-07-07 12:00:00', '2012-07-12 12:00:00', 70, 0, 0, 0);
 
 COMMIT;
 
 -- -----------------------------------------------------
--- Data for table `hotelDB`.`Offer`
+-- Data for table `hotelDB`.`Discount`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Offer` (`idOffer`, `name`, `discount`, `Rental_Room_idRoom`, `Rental_Customer_idCustomer`) VALUES (1, 'EarlyBooking', 0.1, '2', '2');
-INSERT INTO `hotelDB`.`Offer` (`idOffer`, `name`, `discount`, `Rental_Room_idRoom`, `Rental_Customer_idCustomer`) VALUES (2, 'Child', 0.04, '1', '1');
+INSERT INTO `hotelDB`.`Discount` (`idDiscount`, `name`, `discount`) VALUES (1, 'Child', 0.1);
+INSERT INTO `hotelDB`.`Discount` (`idDiscount`, `name`, `discount`) VALUES (2, 'EarlyBooking', 0.2);
 
 COMMIT;
 
@@ -161,6 +217,25 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`, `Rental_Room_idRoom`, `Rental_Customer_idCustomer`, `payed`) VALUES (1, 'coffee', 3.0, '1', '1', 0);
+INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (1, 'Coffee', 3);
+INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (2, 'Tost', 2);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `hotelDB`.`Order`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `hotelDB`;
+INSERT INTO `hotelDB`.`Order` (`idOrder`, `idService`, `idRental`, `payed`) VALUES (1, 1, 1, 1);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `hotelDB`.`Offer`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `hotelDB`;
+INSERT INTO `hotelDB`.`Offer` (`idOffer`, `idRental`, `idDiscount`) VALUES (1, 1, 2);
 
 COMMIT;
