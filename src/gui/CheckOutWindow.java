@@ -28,8 +28,8 @@ public class CheckOutWindow extends javax.swing.JFrame {
 	 * Creates new form CheckInWindow
 	 */
 	public CheckOutWindow(JTextArea textArea) {
-		initComponents();
 		this.textArea = textArea;
+		initComponents();
 	}
 
 	/**

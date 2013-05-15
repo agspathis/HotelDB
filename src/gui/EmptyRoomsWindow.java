@@ -25,8 +25,8 @@ public class EmptyRoomsWindow extends javax.swing.JFrame {
 	 * Creates new form FreeRoomsWindow
 	 */
 	public EmptyRoomsWindow(JTextArea textArea) {
-		initComponents();
 		this.textArea = textArea;
+		initComponents();
 	}
 
 	/**

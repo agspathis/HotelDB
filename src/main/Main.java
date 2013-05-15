@@ -12,7 +12,7 @@ import gui.Window;
 public class Main {
 	
 	public static String URL, USER, PASSWORD;
-
+	private static final int WIDTH = 800, HEIGTH = 300;
 	/**
 	 * @param args
 	 */
@@ -50,10 +50,9 @@ public class Main {
        	PASSWORD = properties.getProperty("db.passwd");
         
        	//main window
-		Window application = new Window();
+		Window application = new Window(WIDTH, HEIGTH);
 		
 		//settings
-		application.setSize(800, 300);
 		application.setVisible(true);
 		application.setResizable(false);
 		// application.pack();

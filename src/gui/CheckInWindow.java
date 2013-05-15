@@ -24,8 +24,8 @@ public class CheckInWindow extends javax.swing.JFrame {
 	 * Creates new form CheckInWindow
 	 */
 	public CheckInWindow(JTextArea textArea) {
-		initComponents();
 		this.textArea = textArea;
+		initComponents();
 	}
 
 	/**

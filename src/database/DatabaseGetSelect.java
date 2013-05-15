@@ -14,7 +14,7 @@ public class DatabaseGetSelect extends Database {
 	public DatabaseGetSelect(JTextArea textArea, String command) {
 		super(command);
 		this.textArea = textArea;
-		// execute(command);
+		//execute();
 	}
 
 	@Override

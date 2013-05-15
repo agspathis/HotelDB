@@ -26,18 +26,16 @@ public class Window extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private JButton bookButton, emptyRoomButton, checkIn, checkOut,
-			paymentButton, commandButton, exitButton;
+	private JButton bookButton, emptyRoomButton, checkInButton, checkOutButton,
+	serviceButton, paymentButton, exitButton;
 	private JTextArea textArea;
 	private JTextField commandTextField;
 
-	public Window() {
+	public Window(int width, int heigth) {
 		super("Hotel Database");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setSize(width, heigth);
 		this.setLayout(new BorderLayout());
-
-		// action handler
-		ActionHandler actionHandler = new ActionHandler();
 
 		// key handler
 		KeyHandler keyHandler = new KeyHandler();
@@ -67,8 +65,8 @@ public class Window extends JFrame {
 		});
 		toolBar.add(emptyRoomButton);
 
-		checkIn = new JButton("Check In");
-		checkIn.addActionListener(new ActionListener() {
+		checkInButton = new JButton("Check In");
+		checkInButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -76,24 +74,38 @@ public class Window extends JFrame {
 				checkInWindow.setVisible(true);
 			}
 		});
-		toolBar.add(checkIn);
+		toolBar.add(checkInButton);
 
-		checkOut = new JButton("Check Out");
-		checkOut.addActionListener(new ActionListener() {
+		checkOutButton = new JButton("Check Out");
+		checkOutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				CheckOutWindow checkOutWindow = new CheckOutWindow(textArea);
 				checkOutWindow.setVisible(true);
 			}
 		});
-		toolBar.add(checkOut);
-
+		toolBar.add(checkOutButton);
+		
+		serviceButton = new JButton("Service");
+		serviceButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ServiceWindow serviceWindow = new ServiceWindow(textArea);
+				serviceWindow.setVisible(true);
+			}
+		});
+		toolBar.add(serviceButton);
+		
 		paymentButton = new JButton("Payment");
+		paymentButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PaymentWindow paymentWindow = new PaymentWindow(textArea);
+				paymentWindow.setVisible(true);
+			}
+		});
 		toolBar.add(paymentButton);
-
-		commandButton = new JButton("Command");
-		commandButton.addActionListener(actionHandler);
-
+		
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ActionListener() {
 
@@ -106,17 +118,17 @@ public class Window extends JFrame {
 		toolBar.add(exitButton);
 
 		// text area
-		textArea = new JTextArea(20, 60);
+		textArea = new JTextArea(20, 70);
 		textArea.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setAutoscrolls(true);
 
 		// command text field
 		JPanel commandPanel = new JPanel();
-		commandTextField = new JTextField("", 60);
+		commandTextField = new JTextField("", 70);
 		commandTextField.addKeyListener(keyHandler);
 		commandPanel.add(commandTextField);
-		commandPanel.add(commandButton);
+		
 
 		// add
 		this.add(toolBar, BorderLayout.NORTH);
@@ -157,37 +169,16 @@ public class Window extends JFrame {
 		}
 	}
 
-	private class ActionHandler implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == commandButton) {
-
-				if (commandTextField.getText().substring(0, 6)
-						.equalsIgnoreCase("insert")) {
-					insertQuery();
-				} else if (commandTextField.getText().substring(0, 6)
-						.equalsIgnoreCase("select")) {
-					selectQuery();
-				} else if (commandTextField.getText().substring(0, 6)
-						.equalsIgnoreCase("update")) {
-					updateQuery();
-				} else if (commandTextField.getText().substring(0, 6)
-						.equalsIgnoreCase("delete")) {
-					deleteQuery();
-				}
-			}
-
-		}
-
-	}
-
 	private class KeyHandler implements KeyListener {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
+				
+				if(commandTextField.getText().length()<6){
+					return;
+				}
+				
 				if (commandTextField.getText().substring(0, 6)
 						.equalsIgnoreCase("insert")) {
 					insertQuery();
