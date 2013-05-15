@@ -105,37 +105,10 @@ CREATE  TABLE IF NOT EXISTS `hotelDB`.`Service` (
   `idService` INT(11) NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NOT NULL ,
   `price` FLOAT NOT NULL ,
-  PRIMARY KEY (`idService`) )
+  PRIMARY KEY (`idService`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 COMMENT = 'This entity connects the reservation with some extra service' /* comment truncated */;
-
-SHOW WARNINGS;
-
--- -----------------------------------------------------
--- Table `hotelDB`.`Order`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `hotelDB`.`Order` ;
-
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `hotelDB`.`Order` (
-  `idOrder` INT(11) NOT NULL AUTO_INCREMENT ,
-  `idService` INT(11) NOT NULL ,
-  `idRental` INT(11) NOT NULL ,
-  `payed` TINYINT(1) NOT NULL DEFAULT false ,
-  INDEX `fk_Service_has_Rental_Rental1` (`idRental` ASC) ,
-  INDEX `fk_Service_has_Rental_Service1` (`idService` ASC) ,
-  PRIMARY KEY (`idOrder`) ,
-  CONSTRAINT `fk_Service_has_Rental_Service1`
-    FOREIGN KEY (`idService` )
-    REFERENCES `hotelDB`.`Service` (`idService` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Service_has_Rental_Rental1`
-    FOREIGN KEY (`idRental` )
-    REFERENCES `hotelDB`.`Rental` (`idRental` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
 
 SHOW WARNINGS;
 
@@ -160,6 +133,34 @@ CREATE  TABLE IF NOT EXISTS `hotelDB`.`Offer` (
   CONSTRAINT `fk_Rental_has_Offer_Offer1`
     FOREIGN KEY (`idDiscount` )
     REFERENCES `hotelDB`.`Discount` (`idDiscount` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+SHOW WARNINGS;
+
+-- -----------------------------------------------------
+-- Table `hotelDB`.`Trade`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `hotelDB`.`Trade` ;
+
+SHOW WARNINGS;
+CREATE  TABLE IF NOT EXISTS `hotelDB`.`Trade` (
+  `idTrade` INT(11) NOT NULL AUTO_INCREMENT ,
+  `idService` INT(11) NOT NULL ,
+  `idRental` INT(11) NOT NULL ,
+  `payed` TINYINT(1) NOT NULL DEFAULT false ,
+  PRIMARY KEY (`idTrade`) ,
+  INDEX `fk_Order_Service1` (`idService` ASC) ,
+  INDEX `fk_Order_Rental1` (`idRental` ASC) ,
+  CONSTRAINT `fk_Order_Service1`
+    FOREIGN KEY (`idService` )
+    REFERENCES `hotelDB`.`Service` (`idService` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Order_Rental1`
+    FOREIGN KEY (`idRental` )
+    REFERENCES `hotelDB`.`Rental` (`idRental` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -223,19 +224,19 @@ INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (2, 'Tost'
 COMMIT;
 
 -- -----------------------------------------------------
--- Data for table `hotelDB`.`Order`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `hotelDB`;
-INSERT INTO `hotelDB`.`Order` (`idOrder`, `idService`, `idRental`, `payed`) VALUES (1, 1, 1, 1);
-
-COMMIT;
-
--- -----------------------------------------------------
 -- Data for table `hotelDB`.`Offer`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
 INSERT INTO `hotelDB`.`Offer` (`idOffer`, `idRental`, `idDiscount`) VALUES (1, 1, 2);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `hotelDB`.`Trade`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `hotelDB`;
+INSERT INTO `hotelDB`.`Trade` (`idTrade`, `idService`, `idRental`, `payed`) VALUES (1, 1, 1, 1);
 
 COMMIT;

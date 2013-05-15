@@ -586,15 +586,16 @@ public class ReservationWindow extends javax.swing.JFrame {
 	}
 	
 	private boolean addOffer(int discountID){
-		System.out.println("Discount: "+discountID);
-		String GETRENTALID = "SELECT idRental " +
+		
+		String GETRENTALIDQUERY = 
+				"SELECT idRental " +
 				"FROM Rental " +
 				"WHERE arrivalDate = '"+aDTF.getText()+ " 12:00:00' AND " +
 						"idRoom = '"+roomTF.getText()+"' AND "+
 						"idCustomer = '"+idTF.getText()+"'";
 		
 		DatabaseGetSelect getRentalID = new DatabaseGetSelect(textArea,
-				GETRENTALID);
+				GETRENTALIDQUERY);
 		
 		ResultSet rs = getRentalID.getResult();
 		
@@ -604,11 +605,11 @@ public class ReservationWindow extends javax.swing.JFrame {
 				int idRental = rs.getInt("idRental");
 				getRentalID.closeAll();
 
-				String  INSERTOFFER = 
+				String  INSERTOFFERQUERY = 
 						"INSERT INTO Offer " +
 						"VALUES(default, "+idRental+", "+discountID+")";
 				DatabaseInsert insertOffer = new DatabaseInsert(textArea, 
-						INSERTOFFER);
+						INSERTOFFERQUERY);
 				if (insertOffer.getConnectionState() == true && 
 						insertOffer.execute()) {
 					insertOffer.closeConnection();
@@ -619,23 +620,22 @@ public class ReservationWindow extends javax.swing.JFrame {
 				
 						
 			} catch (SQLException e) {
-				System.out.println("Error");
 				return false;
 
 			}
 		}else{
-			System.out.println("exit");
 			return false;
 		}
 		
 	}
+	
 	private String[] getDiscounts(){
 		ArrayList<String> temp = new ArrayList<String>();
-		String GETDISCOUNTS = "SELECT name " +
+		String GETDISCOUNTSQUERY = "SELECT name " +
 							"FROM Discount";
 		
 		DatabaseGetSelect getDiscounts = new DatabaseGetSelect(textArea,
-				GETDISCOUNTS);
+				GETDISCOUNTSQUERY);
 		
 		ResultSet rs = getDiscounts.getResult();
 		

@@ -52,4 +52,15 @@ Dependencies
 Java library dependencies:
 MySQL Connector/J driver
 
+Database
+--------
 
+The database tables are:
+
+-Customer
+-Room
+-Rental
+-Discount
+-Offer
+-Service
+-Trade
