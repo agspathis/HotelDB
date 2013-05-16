@@ -113,7 +113,8 @@ public class CheckOutWindow extends javax.swing.JFrame {
 		}
 
 		if (checkIfPayed()) {
-			String CHECKOUTQUERY = "UPDATE Rental " + "SET checkOut = True "
+			String CHECKOUTQUERY = 
+					"UPDATE Rental " + "SET checkOut = True "
 					+ "WHERE idRoom = '" + roomTF.getText() + "'";
 
 			DatabaseUpdate checkOutUpdate = new DatabaseUpdate(textArea,
@@ -123,13 +124,15 @@ public class CheckOutWindow extends javax.swing.JFrame {
 					&& checkOutUpdate.execute())) {
 				JOptionPane.showMessageDialog(null, "Check out field",
 						"Check out error", JOptionPane.ERROR_MESSAGE);
-			} 
+			}
+			checkOutUpdate.closeConnection();
 		}
 
 	}
 
 	private boolean checkIfPayed() {
-		String CHECKIFPAYEDQUERY = "SELECT payed " + "FROM Rental "
+		String CHECKIFPAYEDQUERY = 
+				"SELECT payed " + "FROM Rental "
 				+ "WHERE idRoom='" + roomTF.getText() + "' "
 				+ "AND date(departureDate) = current_date()";
 

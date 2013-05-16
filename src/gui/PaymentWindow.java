@@ -1,6 +1,13 @@
 package gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+
+import database.DatabaseSelect;
+import database.DatabaseUpdate;
 
 /**
  *
@@ -38,8 +45,8 @@ public class PaymentWindow extends javax.swing.JFrame {
         fromTF = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         toTF = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        currentInButton = new javax.swing.JButton();
+        incomeButton = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -51,6 +58,13 @@ public class PaymentWindow extends javax.swing.JFrame {
         roomTF.setColumns(5);
 
         payedButton.setText("Payed");
+        payedButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				payed();
+				
+			}
+		});
 
         jLabel2.setText("From");
 
@@ -60,10 +74,17 @@ public class PaymentWindow extends javax.swing.JFrame {
 
         toTF.setColumns(11);
 
-        jButton1.setText("Current In");
-        jButton1.setToolTipText("shows current in unpayed rooms");
+        currentInButton.setText("Current In");
+        currentInButton.setToolTipText("shows current in unpayed rooms");
+        currentInButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				showCurrentlyIn();
+				
+			}
+		});
 
-        jButton2.setText("Income");
+        incomeButton.setText("Income");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -93,11 +114,11 @@ public class PaymentWindow extends javax.swing.JFrame {
                                 .addComponent(payedButton))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jButton2)))
+                                .addComponent(incomeButton)))
                         .addContainerGap())))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(currentInButton)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,22 +140,135 @@ public class PaymentWindow extends javax.swing.JFrame {
                     .addComponent(fromTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(toTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(incomeButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(currentInButton)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>                        
 
+    private void payed(){
+    	// check text field
+		if (roomTF.getText().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Fill room's text field",
+					"Empty text field", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		if(roomPaymentState()){
+			if(servicesPaymentState()){
+				// do updates
+				rentalUpdatePayed();
+			}
+		}
+		
+    }
+    
+    private boolean rentalUpdatePayed(){
+    	
+		
+		String PAYEDUPDATEQUERY = 
+				"UPDATE Rental " +
+				"SET payed = 1 " +
+				"WHERE idRoom = '"+roomTF.getText()+"' AND " +
+						"checkOut = 0 AND checkIn = 1 AND payed = 0";
+		
+		DatabaseUpdate payedUpdate = new DatabaseUpdate(textArea, 
+				PAYEDUPDATEQUERY);
+		
+		if (!(payedUpdate.getConnectionState() == true
+				&& payedUpdate.execute())) {
+			JOptionPane.showMessageDialog(null, "Payed update unable",
+					"Payed error", JOptionPane.ERROR_MESSAGE);
+			payedUpdate.closeConnection();
+			return false;
+		} else{
+			payedUpdate.closeConnection();
+			return true;
+		}
+		
+    }
+    
+    private boolean roomPaymentState(){
+    	
+    	String ROOMPAYMENTSTATEQUERY = 
+    			"SELECT firstName, lastName, idRoom, " +
+    			"dateDiff(departureDate,arrivalDate)*dayPrice AS 'Room Price', " +
+    			"sum(discount) AS 'Total discount', " +
+    			"dateDiff(departureDate,arrivalDate)*dayPrice*(1-sum(discount)) AS 'Total' " +
+    			"FROM ((Rental NATURAL JOIN Customer) NATURAL JOIN " +
+    			"(Offer NATURAL JOIN Discount)) " +
+    			"WHERE idRoom = '"+roomTF.getText()+"' AND checkOut = 0 AND " +
+    					"checkIn = 1 AND payed = 0";
+    	
+    	
+    	DatabaseSelect roomPayment = new DatabaseSelect(textArea, 
+    			ROOMPAYMENTSTATEQUERY);
+    	
+    	if(roomPayment.getConnectionState()==true && roomPayment.execute()){
+    		roomPayment.closeConnection();
+        	return true;
+    	}else{
+    		JOptionPane.showMessageDialog(null, "Rooms payment unable",
+					"Room error", JOptionPane.ERROR_MESSAGE);
+    		roomPayment.closeConnection();
+    		return false;
+    	}
+    }
+    
+    private boolean servicesPaymentState(){
+    	String SERVICEPAYMENTSTATEQUERY = 
+    			"SELECT firstName, lastName, idRoom, " +
+    			"sum(Service.price) AS 'Total Service Price' " +
+    			"FROM ((Rental NATURAL JOIN Customer) NATURAL JOIN " +
+    			"(Trade NATURAL JOIN Service)) " +
+    			"WHERE idRoom = '"+roomTF.getText()+"' AND checkOut = 0 AND " +
+    					"checkIn = 1";
+    	
+    	DatabaseSelect servicePayment = new DatabaseSelect(textArea, 
+    			SERVICEPAYMENTSTATEQUERY);
+    	
+    	if((servicePayment.getConnectionState()==true && servicePayment.execute())){
+    		servicePayment.closeConnection();
+    		return true;
+    	}else{
+    		JOptionPane.showMessageDialog(null, "Service payment unable",
+					"Service error", JOptionPane.ERROR_MESSAGE);
+    		servicePayment.closeConnection();
+    		return false;
+    	}
+    }
+    
+    private void showCurrentlyIn(){
+    	String CURRENTPAYMENTSTATEQUERY = 
+    			"SELECT firstName, lastName, idRoom, " +
+    			"dateDiff(current_date(),arrivalDate)*dayPrice AS 'Room Price', " +
+    			"sum(discount) AS 'Total discount', " +
+    			"dateDiff(current_date(),arrivalDate)*dayPrice*(1-sum(discount)) AS 'Total' " +
+    			"FROM ((Rental NATURAL JOIN Customer) NATURAL JOIN " +
+    			"(Offer NATURAL JOIN Discount)) " +
+    			"WHERE checkOut = 0 AND checkIn = 1 AND payed = 0";
+    	
+    	DatabaseSelect currentState = new DatabaseSelect(textArea, 
+    			CURRENTPAYMENTSTATEQUERY);
+    	
+    	if(currentState.getConnectionState()==true && currentState.execute()){
+    		currentState.closeConnection();
+    	}else{
+    		JOptionPane.showMessageDialog(null, "Rooms state unable",
+					"Room state error", JOptionPane.ERROR_MESSAGE);
+    		currentState.closeConnection();
+    	}
+    }
     
     // Variables declaration - do not modify                     
     private javax.swing.JTextField fromTF;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton currentInButton;
+    private javax.swing.JButton incomeButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

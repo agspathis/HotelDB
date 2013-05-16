@@ -188,7 +188,7 @@ public class ServiceWindow extends javax.swing.JFrame {
     private boolean makeOrder(){
 		String  INSERTORDERQUERY = 
 				"INSERT INTO Trade " +
-				"VALUES(default, "+idService+", "+idRental+", 0)";
+				"VALUES(default, "+idService+", "+idRental+")";
 		
 		
 		DatabaseInsert insertOrder = new DatabaseInsert(textArea, 

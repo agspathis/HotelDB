@@ -25,7 +25,7 @@ public class ReservationWindow extends javax.swing.JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextArea textArea;
-
+	private int idRental;
 	/**
 	 * Creates new form ReservationWindow
 	 */
@@ -395,7 +395,12 @@ public class ReservationWindow extends javax.swing.JFrame {
 		if (customerExist()) {// if customer exist
 			if (emptyRoom()) {// if room free
 				if (makeRental()) {// make rental
-					if(!makeOffer()){// offer error
+					if(makeOffer()){// offer error
+						if(!addDefaultService()){// add default service
+							JOptionPane.showMessageDialog(null, "Can't add service",
+									"Service error", JOptionPane.ERROR_MESSAGE);
+						}
+					}else{
 						JOptionPane.showMessageDialog(null, "Can't make offer",
 								"Offer error", JOptionPane.ERROR_MESSAGE);
 					}
@@ -412,7 +417,12 @@ public class ReservationWindow extends javax.swing.JFrame {
 			if (insertCustomer()) {// create customer
 				if (emptyRoom()) {// if room free
 					if (makeRental()) {// make rental
-						if(!makeOffer()){// offer error
+						if(makeOffer()){// offer error
+							if(!addDefaultService()){// add default service
+								JOptionPane.showMessageDialog(null, "Can't add service",
+										"Service error", JOptionPane.ERROR_MESSAGE);
+							}
+						}else{
 							JOptionPane.showMessageDialog(null, "Can't make offer",
 									"Offer error", JOptionPane.ERROR_MESSAGE);
 						}
@@ -435,7 +445,8 @@ public class ReservationWindow extends javax.swing.JFrame {
 	}
 
 	private boolean customerExist() {
-		String CUSTOMEREXISTQUERY = "SELECT idCustomer " + "FROM Customer "
+		String CUSTOMEREXISTQUERY = 
+				"SELECT idCustomer " + "FROM Customer "
 				+ "WHERE idCustomer='" + idTF.getText() + "'";
 
 		DatabaseGetSelect customerExist = new DatabaseGetSelect(textArea,
@@ -461,7 +472,8 @@ public class ReservationWindow extends javax.swing.JFrame {
 	}
 
 	private boolean emptyRoom() {
-		String EMPTYROOMQUERY = "SELECT idRoom " + "FROM Room "
+		String EMPTYROOMQUERY = 
+				"SELECT idRoom " + "FROM Room "
 				+ "WHERE idRoom='" + roomTF.getText() + "' AND "
 				+ "idRoom not in " + "(SELECT idRoom " + "FROM Rental "
 				+ "WHERE (date(arrivalDate)>='" + aDTF.getText()
@@ -492,7 +504,8 @@ public class ReservationWindow extends javax.swing.JFrame {
 	}
 
 	private boolean insertCustomer() {
-		String INSERTCUSTOMER = "INSERT INTO Customer(`idCustomer`, `lastName`," +
+		String INSERTCUSTOMER = 
+				"INSERT INTO Customer(`idCustomer`, `lastName`," +
 				" `firstName`, `city`, `country`, `email`)"
 				+ "VALUES ('"
 				+ idTF.getText()
@@ -520,7 +533,8 @@ public class ReservationWindow extends javax.swing.JFrame {
 
 	private boolean makeRental() {
 
-		String MAKERENTAL = "INSERT INTO Rental(idRental, `idRoom`, " +
+		String MAKERENTAL = 
+				"INSERT INTO Rental(idRental, `idRoom`, " +
 				"`idCustomer`, `arrivalDate`, `departureDate`, " +
 				"`dayPrice`, `checkIn`, `checkOut`, `payed`) "
 				+ "VALUES (default, '"
@@ -576,6 +590,8 @@ public class ReservationWindow extends javax.swing.JFrame {
 
 		int[] indices = offerList.getSelectedIndices();
 		if (indices.length == 0) {
+			//add default offer
+			addOffer(1);
 			return true;
 		} else {
 			for (int i : indices) {
@@ -602,7 +618,7 @@ public class ReservationWindow extends javax.swing.JFrame {
 		if(rs != null){
 			try {
 				rs.next();
-				int idRental = rs.getInt("idRental");
+				idRental = rs.getInt("idRental");
 				getRentalID.closeAll();
 
 				String  INSERTOFFERQUERY = 
@@ -631,8 +647,9 @@ public class ReservationWindow extends javax.swing.JFrame {
 	
 	private String[] getDiscounts(){
 		ArrayList<String> temp = new ArrayList<String>();
-		String GETDISCOUNTSQUERY = "SELECT name " +
-							"FROM Discount";
+		String GETDISCOUNTSQUERY = 
+				"SELECT name " +
+				"FROM Discount";
 		
 		DatabaseGetSelect getDiscounts = new DatabaseGetSelect(textArea,
 				GETDISCOUNTSQUERY);
@@ -655,6 +672,25 @@ public class ReservationWindow extends javax.swing.JFrame {
 			type[i] = temp.get(i);
 		}
 		return type;
+	}
+	
+	private boolean addDefaultService(){
+		
+		String  INSERTORDERQUERY = 
+				"INSERT INTO Trade " +
+				"VALUES(default, 1, "+idRental+")";
+		
+		
+		DatabaseInsert insertOrder = new DatabaseInsert(textArea, 
+				INSERTORDERQUERY);
+				
+		if (insertOrder.getConnectionState() == true && insertOrder.execute()) {
+			insertOrder.closeConnection();
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 
 	// Variables declaration - do not modify

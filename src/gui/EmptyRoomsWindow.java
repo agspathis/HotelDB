@@ -152,7 +152,8 @@ public class EmptyRoomsWindow extends javax.swing.JFrame {
 					"Date error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String FREEROOMQUERY = "SELECT * " + "FROM Room "
+		String FREEROOMQUERY = 
+				"SELECT * " + "FROM Room "
 				+ "WHERE idRoom not in " + "(SELECT idRoom "
 				+ "FROM Rental " + "WHERE (date(arrivalDate)>='"
 				+ fromTF.getText() + "' AND date(arrivalDate)<'"
@@ -162,11 +163,13 @@ public class EmptyRoomsWindow extends javax.swing.JFrame {
 
 		DatabaseSelect freeRoomSelect = new DatabaseSelect(textArea,
 				FREEROOMQUERY);
+		
 		if (!(freeRoomSelect.getConnectionState() == true
 				&& freeRoomSelect.execute())) {
 			JOptionPane.showMessageDialog(null, "Free room field",
 					"Free room error", JOptionPane.ERROR_MESSAGE);
 		}
+		freeRoomSelect.closeConnection();
 	}
 
 	private boolean checkDate() {
@@ -176,6 +179,7 @@ public class EmptyRoomsWindow extends javax.swing.JFrame {
 			return true;
 		}
 	}
+	
 	// Variables declaration - do not modify
 	private javax.swing.JTextField fromTF;
 	private javax.swing.JLabel jLabel1;
