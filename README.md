@@ -76,4 +76,4 @@ The database tables are:
 * Service
 * Trade
 
-![alt tag](https://github.com/mitkof6/HotelDB/blob/master/db_schema.png)
+![My image](https://github.com/mitkof6/HotelDB/blob/master/db_schema.png)
