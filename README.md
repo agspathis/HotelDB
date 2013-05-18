@@ -42,7 +42,9 @@ After installation some configurations must be made from terminal.
 
 		source hotelDB.sql;
 
-if everything is ok you can check the database (show databases;)
+if everything is ok you can check the database 
+
+		show databases;
 
 4)make user and grant privileges
 
