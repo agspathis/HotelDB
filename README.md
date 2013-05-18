@@ -75,3 +75,5 @@ The database tables are:
 * Offer
 * Service
 * Trade
+
+![alt tag](https://github.com/mitkof6/HotelDB/blob/master/db_schema.png)
