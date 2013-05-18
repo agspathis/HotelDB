@@ -2,12 +2,14 @@ Hotel Database Manager
 ======================
 
 STANEV DIMITAR
+
 SPATHIS ARISTOTELIS
 
 Description
 ===========
 
 Language: Java
+
 Database server: Mysql-server
 
 Program with gui and database support.
@@ -29,12 +31,15 @@ Mysql server (mysql-server)
 After installation some configurations must be made from terminal.
 
 1)login into mysql
+
 		mysql -u root -p
 
 2)create create schema
+
 		database hotelDB; 
 
 3)load sql file
+
 		source hotelDB.sql;
 
 if everything is ok you can check the database (show databases;)
@@ -49,6 +54,7 @@ if everything is ok you can check the database (show databases;)
 not need to change database.properties file.
 
 6)run 
+
 		java -jar HotelDB.jar
 
 Dependencies
