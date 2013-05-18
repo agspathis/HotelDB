@@ -16,6 +16,14 @@ import main.TableColumnAdjuster;
 
 import com.mysql.jdbc.PreparedStatement;
 
+/**
+ * This class implements the behavior of executing a select statement and 
+ * shows the result of the query in a separate window. Also calls Table Column
+ * Adjuster to configure the size of the columns of the result
+ * 
+ * @author
+ *
+ */
 public class DatabaseSelect extends Database {
 
 	public DatabaseSelect(JTextArea textArea, String command) {
@@ -43,7 +51,6 @@ public class DatabaseSelect extends Database {
 			return true;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode() + "\n" + e.getMessage() + "\n"
 					+ e.getSQLState() + "\n");
 			return false;
@@ -58,7 +65,6 @@ public class DatabaseSelect extends Database {
 				}
 
 			} catch (SQLException ex) {
-				// TODO Auto-generated catch block
 				textArea.append(ex.getErrorCode() + "\n" + ex.getMessage()
 						+ "\n" + ex.getSQLState() + "\n");
 			}

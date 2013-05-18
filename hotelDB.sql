@@ -135,7 +135,8 @@ CREATE  TABLE IF NOT EXISTS `hotelDB`.`Offer` (
     REFERENCES `hotelDB`.`Discount` (`idDiscount` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'This table keep track of all offers for a given rental';
 
 SHOW WARNINGS;
 
@@ -149,20 +150,22 @@ CREATE  TABLE IF NOT EXISTS `hotelDB`.`Trade` (
   `idTrade` INT(11) NOT NULL AUTO_INCREMENT ,
   `idService` INT(11) NOT NULL ,
   `idRental` INT(11) NOT NULL ,
+  `payed` TINYINT(1) NOT NULL DEFAULT false ,
   PRIMARY KEY (`idTrade`) ,
-  INDEX `fk_Order_Service1` (`idService` ASC) ,
-  INDEX `fk_Order_Rental1` (`idRental` ASC) ,
-  CONSTRAINT `fk_Order_Service1`
+  INDEX `fk_Service_has_Rental_Rental1` (`idRental` ASC) ,
+  INDEX `fk_Service_has_Rental_Service1` (`idService` ASC) ,
+  CONSTRAINT `fk_Service_has_Rental_Service1`
     FOREIGN KEY (`idService` )
     REFERENCES `hotelDB`.`Service` (`idService` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Order_Rental1`
+  CONSTRAINT `fk_Service_has_Rental_Rental1`
     FOREIGN KEY (`idRental` )
     REFERENCES `hotelDB`.`Rental` (`idRental` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'This table keep track of all services for a given rental';
 
 SHOW WARNINGS;
 
@@ -179,6 +182,7 @@ USE `hotelDB`;
 INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('101', 1, 1, 2, 'seeview', 50);
 INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('201', 2, 1, 1, 'seeview', 40);
 INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('301', 3, 1, 3, 'seeview', 60);
+INSERT INTO `hotelDB`.`Room` (`idRoom`, `floor`, `number`, `capacity`, `discription`, `basePrice`) VALUES ('402', 1, 2, 1, 'old fashion', 70);
 
 COMMIT;
 
@@ -197,7 +201,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Rental` (`idRental`, `idRoom`, `idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES (1, '101', '7436', '2012-07-07 12:00:00', '2012-07-10', 55, 1, 1, 1);
+INSERT INTO `hotelDB`.`Rental` (`idRental`, `idRoom`, `idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES (1, '101', '7436', '2012-07-07 12:00:00', '2012-07-10 12:00:00', 55, 1, 1, 1);
 INSERT INTO `hotelDB`.`Rental` (`idRental`, `idRoom`, `idCustomer`, `arrivalDate`, `departureDate`, `dayPrice`, `checkIn`, `checkOut`, `payed`) VALUES (2, '301', '7729', '2013-07-07 12:00:00', '2014-07-12 12:00:00', 70, 0, 0, 0);
 
 COMMIT;
@@ -210,6 +214,7 @@ USE `hotelDB`;
 INSERT INTO `hotelDB`.`Discount` (`idDiscount`, `name`, `discount`) VALUES (1, 'NoDiscount', 0);
 INSERT INTO `hotelDB`.`Discount` (`idDiscount`, `name`, `discount`) VALUES (2, 'EarlyBooking', 0.2);
 INSERT INTO `hotelDB`.`Discount` (`idDiscount`, `name`, `discount`) VALUES (3, 'Child', 0.1);
+INSERT INTO `hotelDB`.`Discount` (`idDiscount`, `name`, `discount`) VALUES (4, 'Athens Tour', 0.05);
 
 COMMIT;
 
@@ -221,6 +226,7 @@ USE `hotelDB`;
 INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (1, 'NoService', 0);
 INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (2, 'Tost', 2);
 INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (3, 'Coffee', 3);
+INSERT INTO `hotelDB`.`Service` (`idService`, `name`, `price`) VALUES (4, 'Tea', 2);
 
 COMMIT;
 
@@ -239,7 +245,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `hotelDB`;
-INSERT INTO `hotelDB`.`Trade` (`idTrade`, `idService`, `idRental`) VALUES (1, 1, 1);
-INSERT INTO `hotelDB`.`Trade` (`idTrade`, `idService`, `idRental`) VALUES (2, 1, 2);
+INSERT INTO `hotelDB`.`Trade` (`idTrade`, `idService`, `idRental`, `payed`) VALUES (1, 2, 1, 1);
+INSERT INTO `hotelDB`.`Trade` (`idTrade`, `idService`, `idRental`, `payed`) VALUES (2, 1, 1, 0);
 
 COMMIT;

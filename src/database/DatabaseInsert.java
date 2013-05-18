@@ -6,6 +6,12 @@ import javax.swing.JTextArea;
 
 import com.mysql.jdbc.PreparedStatement;
 
+/**
+ * This class implements the behavior of executing a insert statement
+ * 
+ * @author
+ *
+ */
 public class DatabaseInsert extends Database {
 
 	public DatabaseInsert(JTextArea textArea, String command) {
@@ -25,7 +31,6 @@ public class DatabaseInsert extends Database {
 			textArea.append("Record inserted\n");
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode() + "\n" + e.getMessage() + "\n"
 					+ e.getSQLState() + "\n");
 			return false;
@@ -40,7 +45,6 @@ public class DatabaseInsert extends Database {
 				}
 
 			} catch (SQLException ex) {
-				// TODO Auto-generated catch block
 				textArea.append(ex.getErrorCode() + "\n" + ex.getMessage()
 						+ "\n" + ex.getSQLState() + "\n");
 			}

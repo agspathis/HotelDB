@@ -6,6 +6,12 @@ import javax.swing.JTextArea;
 
 import com.mysql.jdbc.PreparedStatement;
 
+/**
+ * This class implements the behavior of executing a update statement
+ * 
+ * @author
+ *
+ */
 public class DatabaseUpdate extends Database {
 
 	public DatabaseUpdate(JTextArea textArea, String command) {
@@ -30,7 +36,6 @@ public class DatabaseUpdate extends Database {
 			textArea.append("Record updated\n");
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode() + "\n" + e.getMessage() + "\n"
 					+ e.getSQLState() + "\n");
 			return false;
@@ -45,7 +50,6 @@ public class DatabaseUpdate extends Database {
 				}
 
 			} catch (SQLException ex) {
-				// TODO Auto-generated catch block
 				textArea.append(ex.getErrorCode() + "\n" + ex.getMessage()
 						+ "\n" + ex.getSQLState() + "\n");
 			}

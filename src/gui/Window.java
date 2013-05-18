@@ -19,6 +19,12 @@ import database.DatabaseInsert;
 import database.DatabaseSelect;
 import database.DatabaseUpdate;
 
+/**
+ * This is the main window
+ * 
+ * @author
+ *
+ */
 public class Window extends JFrame {
 
 	/**
@@ -30,6 +36,7 @@ public class Window extends JFrame {
 	serviceButton, paymentButton, exitButton;
 	private JTextArea textArea;
 	private JTextField commandTextField;
+	public static final String SEPERATOR = "******************************\n";
 
 	public Window(int width, int heigth) {
 		super("Hotel Database");
@@ -120,6 +127,8 @@ public class Window extends JFrame {
 		// text area
 		textArea = new JTextArea(20, 70);
 		textArea.setEditable(false);
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setAutoscrolls(true);
 
@@ -137,6 +146,9 @@ public class Window extends JFrame {
 
 	}
 
+	/**
+	 * Insert query action
+	 */
 	private void insertQuery() {
 		DatabaseInsert query = new DatabaseInsert(textArea,
 				commandTextField.getText());
@@ -145,6 +157,9 @@ public class Window extends JFrame {
 		}
 	}
 
+	/**
+	 * Select query action
+	 */
 	private void selectQuery() {
 		DatabaseSelect query = new DatabaseSelect(textArea,
 				commandTextField.getText());
@@ -153,6 +168,9 @@ public class Window extends JFrame {
 		}
 	}
 
+	/**
+	 * Update query action
+	 */
 	private void updateQuery() {
 		DatabaseUpdate query = new DatabaseUpdate(textArea,
 				commandTextField.getText());
@@ -161,6 +179,9 @@ public class Window extends JFrame {
 		}
 	}
 
+	/**
+	 * Delete query action
+	 */
 	private void deleteQuery() {
 		DatabaseDelete query = new DatabaseDelete(textArea,
 				commandTextField.getText());
@@ -169,6 +190,11 @@ public class Window extends JFrame {
 		}
 	}
 
+	/**
+	 * Key handler class
+	 * 
+	 * @author 
+	 */
 	private class KeyHandler implements KeyListener {
 
 		@Override
@@ -198,16 +224,13 @@ public class Window extends JFrame {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 	}
-
 }

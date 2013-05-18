@@ -7,6 +7,13 @@ import javax.swing.JTextArea;
 
 import com.mysql.jdbc.PreparedStatement;
 
+/**
+ * This class implements the behavior of executing a select statement and getting
+ * the result back
+ * 
+ * @author
+ *
+ */
 public class DatabaseGetSelect extends Database {
 
 	ResultSet rs = null;
@@ -48,7 +55,6 @@ public class DatabaseGetSelect extends Database {
 				rs.close();
 
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

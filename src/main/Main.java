@@ -9,6 +9,12 @@ import javax.swing.JOptionPane;
 
 import gui.Window;
 
+/**
+ * This is the main class from where the program is started. Also it loads the
+ * database properties from database.properties file
+ * 
+ * @author
+ */
 public class Main {
 	
 	public static String URL, USER, PASSWORD;

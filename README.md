@@ -1,55 +1,71 @@
 Hotel Database Manager
+======================
 
 STANEV DIMITAR
 SPATHIS ARISTOTELIS
 
 Description
------------
+===========
 
 Language: Java
 Database server: Mysql-server
 
 Program with gui and database support.
 
-+make reservation
-+check for free rooms
-+check out
-+check in
-+payment
-+statistics
-+query engine
+* Make reservation
+* Check for free rooms
+* Check out
+* Check in
+* Payment
+* Statistics
+* Query engine
 
 Installation
------------
+============
 
 In order to work you need to install:
 Mysql server (mysql-server)
 
 After installation some configurations must be made from terminal.
 
-1)login mysql -u root -p
+1)login into mysql
+		mysql -u root -p
 
-2)create database hotelDB; (create schema)
+2)create create schema
+		database hotelDB; 
 
-3)source hotelDB.sql; (load sql file)
+3)load sql file
+		source hotelDB.sql;
 
 if everything is ok you can check the database (show databases;)
 
 4)make user and grant privileges
 
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
-USE hotelDB;
-GRANT ALL ON hotelDB.* TO 'admin'@'localhost';
+		CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
+		USE hotelDB;
+		GRANT ALL ON hotelDB.* TO 'admin'@'localhost';
 
 5)If you follow the instructions with user admin and password admin you will
 not need to change database.properties file.
 
-6)run java -jar HotelDB.jar
+6)run 
+		java -jar HotelDB.jar
 
 Dependencies
-------------
+============
 
 Java library dependencies:
 MySQL Connector/J driver
 
+Database
+========
 
+The database tables are:
+
+* Customer
+* Room
+* Rental
+* Discount
+* Offer
+* Service
+* Trade

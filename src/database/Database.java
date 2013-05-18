@@ -46,7 +46,6 @@ public abstract class Database {
 		try {
 			connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			textArea.append(e.getErrorCode() + "\n" + e.getMessage() + "\n"
 					+ e.getSQLState() + "\n");
 			return false;
