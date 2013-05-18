@@ -1,9 +1,9 @@
 Hotel Database Manager
 ======================
 
-STANEV DIMITAR
+Jim Stanev
 
-SPATHIS ARISTOTELIS
+Aristotelis Spathis
 
 Description
 ===========
@@ -76,4 +76,4 @@ The database tables are:
 * Service
 * Trade
 
-![My image](https://github.com/mitkof6/HotelDB/blob/master/db_schema.png)
+![Schema](https://github.com/mitkof6/HotelDB/blob/master/db_schema.png)
