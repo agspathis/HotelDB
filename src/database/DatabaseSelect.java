@@ -26,98 +26,98 @@ import com.mysql.jdbc.PreparedStatement;
  */
 public class DatabaseSelect extends Database {
 
-	public DatabaseSelect(JTextArea textArea, String command) {
-		super(command);
-		this.textArea = textArea;
-		// execute(command);
-	}
+    public DatabaseSelect(JTextArea textArea, String command) {
+	super(command);
+	this.textArea = textArea;
+	// execute(command);
+    }
 
-	@Override
-	public boolean execute() {
+    @Override
+    public boolean execute() {
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	PreparedStatement ps = null;
+	ResultSet rs = null;
 
-		try {
-			ps = (PreparedStatement) connection.prepareStatement(command);
-			rs = ps.executeQuery();
+	try {
+	    ps = (PreparedStatement) connection.prepareStatement(command);
+	    rs = ps.executeQuery();
 
-			textArea.append(command+"\n");
-			textArea.append("Query executed\n");
+	    textArea.append(command+"\n");
+	    textArea.append("Query executed\n");
 
-			//show result
-			showResult(rs);
+	    //show result
+	    showResult(rs);
 			
-			return true;
+	    return true;
 
-		} catch (SQLException e) {
-			textArea.append(e.getErrorCode() + "\n" + e.getMessage() + "\n"
-					+ e.getSQLState() + "\n");
-			return false;
-		} finally {
+	} catch (SQLException e) {
+	    textArea.append(e.getErrorCode() + "\n" + e.getMessage() + "\n"
+			    + e.getSQLState() + "\n");
+	    return false;
+	} finally {
 
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (connection != null) {
-					closeConnection();
-				}
-
-			} catch (SQLException ex) {
-				textArea.append(ex.getErrorCode() + "\n" + ex.getMessage()
-						+ "\n" + ex.getSQLState() + "\n");
-			}
+	    try {
+		if (ps != null) {
+		    ps.close();
+		}
+		if (connection != null) {
+		    closeConnection();
 		}
 
+	    } catch (SQLException ex) {
+		textArea.append(ex.getErrorCode() + "\n" + ex.getMessage()
+				+ "\n" + ex.getSQLState() + "\n");
+	    }
 	}
 
-	private DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+    }
 
-		ResultSetMetaData metaData = rs.getMetaData();
+    private DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
 
-		// names of columns
-		Vector<String> columnNames = new Vector<String>();
-		int columnCount = metaData.getColumnCount();
-		for (int column = 1; column <= columnCount; column++) {
-			columnNames.add(metaData.getColumnName(column));
-		}
+	ResultSetMetaData metaData = rs.getMetaData();
 
-		// data of the table
-		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-		while (rs.next()) {
-			Vector<Object> vector = new Vector<Object>();
-			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-				vector.add(rs.getObject(columnIndex));
-			}
-			data.add(vector);
-		}
-
-		return new DefaultTableModel(data, columnNames);
-
+	// names of columns
+	Vector<String> columnNames = new Vector<String>();
+	int columnCount = metaData.getColumnCount();
+	for (int column = 1; column <= columnCount; column++) {
+	    columnNames.add(metaData.getColumnName(column));
 	}
+
+	// data of the table
+	Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+	while (rs.next()) {
+	    Vector<Object> vector = new Vector<Object>();
+	    for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+		vector.add(rs.getObject(columnIndex));
+	    }
+	    data.add(vector);
+	}
+
+	return new DefaultTableModel(data, columnNames);
+
+    }
 	
-	private void showResult(ResultSet rs) throws SQLException{
-		//creates the table
-		JTable table = new JTable(buildTableModel(rs));
-		table.setEnabled(false);
+    private void showResult(ResultSet rs) throws SQLException{
+	//creates the table
+	JTable table = new JTable(buildTableModel(rs));
+	table.setEnabled(false);
 					
-		//abjust table size
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		TableColumnAdjuster tca = new TableColumnAdjuster(table);
-		tca.adjustColumns();	
+	//abjust table size
+	table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+	TableColumnAdjuster tca = new TableColumnAdjuster(table);
+	tca.adjustColumns();	
 			
-		//JFrame
-		JFrame view = new JFrame("View");
-		view.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	//JFrame
+	JFrame view = new JFrame("View");
+	view.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		//add to frame
-		JScrollPane pane = new JScrollPane(table);
-		view.add(pane);
+	//add to frame
+	JScrollPane pane = new JScrollPane(table);
+	view.add(pane);
 		
-		//settings
-		view.setVisible(true);
-		view.setSize(table.getWidth(), 400);
-	}
+	//settings
+	view.setVisible(true);
+	view.setSize(table.getWidth(), 400);
+    }
 
 }
